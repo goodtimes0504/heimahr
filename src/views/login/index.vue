@@ -5,6 +5,7 @@
       <h1>登录</h1>
       <el-card shadow="never" class="login-card">
         <!--登录表单-->
+        <!-- ref="form" 绑定表单对象 后续可以使用this.$refs.form.validate()方法进行表单校验 -->
         <!-- el-form > el-form-item > el-input -->
         <el-form ref="form" :model="loginForm" :rules="loginRules">
           <el-form-item prop="mobile">
