@@ -22,12 +22,14 @@
           <el-form-item>
             <el-button style="width:350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
+          <el-button>测试</el-button>
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
+import axios from 'axios'
 export default {
   name: 'Login',
   data() {
@@ -76,10 +78,24 @@ export default {
     login() {
       this.$refs.form.validate((isOK) => {
         if (isOK) {
-          alert('校验通过')
+          // alert('校验通过')
+          this.$store.dispatch('user/login', this.loginForm)
         }
       })
     }
+    // 测试axios
+    // textAxios() {
+    //   axios({
+    //     // url: 'https://heimahr.itheima.net/api/sys/login',
+    //     // 改成下面的就是匹配到vue.config.js中的proxy代理 用代理转发api 绕过浏览器的跨域限制
+    //     url: '/api/sys/login', // 实际地址是http://localhost:9528/api/sys/login 这样会被代理识别并转发到https://heimahr.itheima.net/api/sys/login
+    //     method: 'post',
+    //     data: {
+    //       username: 'admin',
+    //       password: '123456'
+    //     }
+    //   })
+    // }
   }
 }
 </script>
