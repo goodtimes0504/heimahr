@@ -14,6 +14,10 @@ export default {
       'name'
     ])
   }
+  // 在首页调用获取用户信息
+  // created() {
+  //   this.$store.dispatch('user/getUserInfo')
+  // }
 }
 </script>
 

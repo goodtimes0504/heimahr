@@ -99,10 +99,12 @@
 // 引入cookies插件相关的方法
 import { setToken, getToken, removeToken } from '@/utils/auth.js'
 // 引入接口
-import { login } from '@/api/user.js'
+import { login, getUserInfo } from '@/api/user.js'
 const state = {
   // state用来存放数据
-  token: getToken() || '' // 应该从本地读取初始值，如果没有则为空字符串
+  token: getToken() || '', // 应该从本地读取初始值，如果没有则为空字符串
+  // 定义一个变量，用来存储用户基本资料
+  userInfo: {}
 }
 const mutations = {
   // mutations用来修改数据
@@ -116,6 +118,12 @@ const mutations = {
   removeToken(state) {
     state.token = ''
     removeToken()
+  },
+  // mutation第一个参数是state，第二个参数是payload，即传递给mutation的参数对象
+  // state参数是一个对象，它包含了state中的所有属性
+  // payload是一个对象，它包含了传递给mutation的参数对象
+  setUserInfo(state, userInfo) {
+    state.userInfo = userInfo
   }
 }
 const actions = {
@@ -133,6 +141,13 @@ const actions = {
     // todo: 调用登录接口，获取token
     const token = await login(payload)
     context.commit('setToken', token)// 修改token
+  },
+  // 获取用户基本资料
+  async getUserInfo(context, payload) {
+    // console.log('调用action中的getUserInfo方法')
+    const result = await getUserInfo()
+    context.commit('setUserInfo', result)
+    // console.log('获取用户基本资料成功')
   }
 }
 export default {

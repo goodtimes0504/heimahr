@@ -6,3 +6,9 @@ export function login(data) {
     data
   })
 }
+export function getUserInfo() {
+  return request({
+    url: '/sys/profile',
+    method: 'get'// 可以不写 默认就是get
+  })
+}

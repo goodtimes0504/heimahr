@@ -82,7 +82,7 @@ import store from '@/store'
  */
 // 声明一个白名单的路径列表 如果在白名单之内 就直接放过 白名单一般是不需要登录就可以访问的页面
 const whiteList = ['/login', '/404']
-router.beforeEach((to, from, next) => {
+router.beforeEach(async(to, from, next) => {
   nprogress.start()// 开启进度条
   // 看看是否有token
   if (store.getters.token) {
@@ -93,6 +93,12 @@ router.beforeEach((to, from, next) => {
       next('/')// 如果next()传入参数，则跳转到该参数的页面 这种情况下并不会执行后置守卫
       nprogress.done()// 由于next传参了 不执行afterEach后置守卫了 所以需要手动关闭进度条
     } else {
+      // 判断是否获取过资料
+      if (!store.getters.userId) {
+        // 没有获取过资料
+        // 获取用户资料并保存 因为getUserInfo里已经有保存动作了 所以这里不需要再保存了
+        await store.dispatch('user/getUserInfo')
+      }
       next()// 直接放行
     }
   } else {
