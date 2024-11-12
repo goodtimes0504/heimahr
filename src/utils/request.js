@@ -90,7 +90,11 @@ import store from '@/store'// 因为这里不是组件里，所以需要引入st
 import { Message } from 'element-ui'// 引入element-ui的MessageBox组件，用于弹窗提示
 
 const service = axios.create({
-  baseURL: '/api', // 配置axios的baseURL
+  baseURL: process.env.VUE_APP_BASE_API, // 配置axios的baseURL
+  // VUE_APP_BASE_API 是在.env文件中配置的变量，用于配置axios的baseURL，方便在开发环境和生产环境切换
+  // 比如在开发环境中，你可以将VUE_APP_BASE_API设置为/api
+  // 而在生产环境中，你可以将VUE_APP_BASE_API设置为/prod-api
+  // 这样就可以在开发环境和生产环境中自动切换baseURL了，而不用手动修改baseURL
   timeout: 10000 // 请求超时时间，单位是毫秒
 })
 // 请求拦截器
@@ -118,6 +122,8 @@ service.interceptors.response.use((response) => {
   if (success) {
     return data
   } else {
+    // 这里是响应成功但是业务失败的情况 就是服务器返回了200 但是业务逻辑失败了 比如token过期了
+    // 提示错误信息 这里使用element-ui的message组件，用于提示错误信息
     Message({
       type: 'error',
       message
@@ -126,6 +132,7 @@ service.interceptors.response.use((response) => {
     return Promise.reject(new Error(message))// 抛出错误，让调用接口的地方可以捕获到错误
   }
 }, (error) => {
+  // 这个error意思是，如果响应失败，就会走这个回调函数
   // debugger
   // error对象里有message属性
   Message({

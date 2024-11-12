@@ -75,6 +75,9 @@ export default {
       }
     }
   },
+  // created() {
+  //   alert(process.env.NODE_ENV)
+  // },
   methods: {
     login() {
       this.$refs.form.validate((isOK) => {
