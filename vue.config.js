@@ -37,10 +37,10 @@ module.exports = {
       errors: true
     },
     // before: require('./mock/mock-server.js') 基础模板做的模拟数据 拦截请求的 要先注释掉
-    Proxy: {
+    proxy: {
       // path: 目标服务器 可以写多个
       '/api': {
-        target: 'https://heimahr.itheima.net/api/sys/login'
+        target: 'https://heimahr.itheima.net/'
         // changeOrigin: true
         // 在使用代理服务器转发请求时，设置 changeOrigin: true 会让代理服务器在转发请求给目标服务器之前，将请求头中的 Origin 字段修改为目标服务器的地址。这样做的目的是为了让目标服务器认为请求是来自与它同源的地址，从而避免因 Origin 字段不匹配而导致的一些潜在问题，比如某些服务器可能会拒绝来自非同源地址的请求。通过设置 changeOrigin: true，可以增加跨域请求被目标服务器接受的可能性，使得代理服务器能够更好地模拟同源请求，从而更顺利地获取目标服务器的响应数据，并将其返回给客户端。这在一定程度上有助于解决跨域访问的限制问题，特别是当目标服务器对 Origin 字段有严格验证要求时，这种设置能够确保请求能够正常通过服务器的验证。
       }

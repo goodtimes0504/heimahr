@@ -22,14 +22,15 @@
           <el-form-item>
             <el-button style="width:350px" type="primary" @click="login">登录</el-button>
           </el-form-item>
-          <el-button>测试</el-button>
+          <!-- <el-button @click="test">测试</el-button> -->
         </el-form>
       </el-card>
     </div>
   </div>
 </template>
 <script>
-import axios from 'axios'
+// import axios from 'axios'
+// import request from '@/utils/request'
 export default {
   name: 'Login',
   data() {
@@ -92,6 +93,16 @@ export default {
     //     method: 'post',
     //     data: {
     //       username: 'admin',
+    //       password: '123456'
+    //     }
+    //   })
+    // }
+    // test() {
+    //   request({
+    //     url: '/sys/login',
+    //     method: 'post',
+    //     data: {
+    //       mobile: '13912345678',
     //       password: '123456'
     //     }
     //   })
