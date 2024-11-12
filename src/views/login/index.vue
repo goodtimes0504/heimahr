@@ -36,9 +36,9 @@ export default {
   data() {
     return {
       loginForm: {
-        mobile: '',
-        password: '',
-        isAgree: false
+        mobile: process.env.NODE_ENV === 'development' ? '13800000002' : '',
+        password: process.env.NODE_ENV === 'development' ? 'hm#qd@23!' : '',
+        isAgree: process.env.NODE_ENV === 'development' // 勾选协议
       },
       loginRules: {
         mobile: [{
@@ -80,10 +80,13 @@ export default {
   // },
   methods: {
     login() {
-      this.$refs.form.validate((isOK) => {
+      this.$refs.form.validate(async(isOK) => {
         if (isOK) {
           // alert('校验通过')
-          this.$store.dispatch('user/login', this.loginForm)
+          await this.$store.dispatch('user/login', this.loginForm)
+          // 上面调用的是vuex里的action 返回一个promise 必须要等它成功才执行下面的跳转 可以用async await 如果不写await 也可以用.then 如果都不写 那么无论成功失败 都会执行下面的跳转 所以要加await 不然就不符合逻辑
+          // 跳转主页
+          this.$router.push('/')
         }
       })
     }

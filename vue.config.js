@@ -31,7 +31,11 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     port: port,
-    open: true,
+    open: false, // 自动打开浏览器
+    // 改变打开的浏览器为谷歌浏览器
+    // open: function() {
+    //   this.opener('chrome')
+    // },不好使
     overlay: {
       warnings: false,
       errors: true

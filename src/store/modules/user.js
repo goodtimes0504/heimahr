@@ -98,6 +98,8 @@
 // ··································
 // 引入cookies插件相关的方法
 import { setToken, getToken, removeToken } from '@/utils/auth.js'
+// 引入接口
+import { login } from '@/api/user.js'
 const state = {
   // state用来存放数据
   token: getToken() || '' // 应该从本地读取初始值，如果没有则为空字符串
@@ -120,7 +122,7 @@ const actions = {
   // actions用来处理异步操作
   // 第一个参数是context，它包含了state、mutations、actions、getters、commit、dispatch等属性
   // 第二个参数是payload，即传递给action的参数对象
-  login(context, payload) {
+  async login(context, payload) {
     // context.commit('mutations中的方法名', payload)
     // context.dispatch('actions中的方法名', payload)
     // context.state.属性名
@@ -129,7 +131,8 @@ const actions = {
     // context.rootGetters.属性名
     // console.log(payload)
     // todo: 调用登录接口，获取token
-    context.commit('setToken', '123')// 修改token
+    const token = await login(payload)
+    context.commit('setToken', token)// 修改token
   }
 }
 export default {
