@@ -148,6 +148,11 @@ const actions = {
     const result = await getUserInfo()
     context.commit('setUserInfo', result)
     // console.log('获取用户基本资料成功')
+  },
+  // 退出登录的action
+  logout(context) {
+    context.commit('removeToken')// 移除token
+    context.commit('setUserInfo', {})// 清空用户信息
   }
 }
 export default {

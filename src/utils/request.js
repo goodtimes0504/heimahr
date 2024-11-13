@@ -88,6 +88,8 @@ import axios from 'axios'// 引入axios
 import store from '@/store'// 因为这里不是组件里，所以需要引入store，才能获取到token
 // 引入element-ui的message组件，用于提示错误信息
 import { Message } from 'element-ui'// 引入element-ui的MessageBox组件，用于弹窗提示
+// 引入router
+import router from '@/router'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // 配置axios的baseURL
@@ -131,10 +133,24 @@ service.interceptors.response.use((response) => {
     // debugger
     return Promise.reject(new Error(message))// 抛出错误，让调用接口的地方可以捕获到错误
   }
-}, (error) => {
+}, async(error) => {
   // 这个error意思是，如果响应失败，就会走这个回调函数
   // debugger
   // error对象里有message属性
+  // debugger
+  if (error.response.status === 401) {
+    // 说明token过期了
+    Message({
+      type: 'warning',
+      message: 'token过期了，请重新登录'
+    })
+    // 因为dispatch是异步的，所以这里需要用await
+    await store.dispatch('user/logout')
+    // 跳转到登录页
+    router.push('/login')
+    // 抛出错误，让调用接口的地方可以捕获到错误
+    return Promise.reject(error)
+  }
   Message({
     type: 'error',
     message: error.message
