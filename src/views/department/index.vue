@@ -2,8 +2,8 @@
   <div class="container">
     <div class="app-container">
       <!-- 组织架构 -->
-      <el-tree :data="depts" :props="defaultProps" :default-expand-all="true">
-        <!-- 节点结构 实际上是循环产生下面的template 有多少数据就生成多少个-->
+      <el-tree :expand-on-click-node="false" :data="depts" :props="defaultProps" :default-expand-all="true">
+        <!-- 节点结构 实际上是类似v-for循环产生下面的template 有多少数据就生成多少个-->
         <!-- v-slot="{ node, data }"只能作用在template标签里
          这里的写法看element ui的文档 获取到node和data的方法和插槽的写法一样
          使用 scoped slot 会传入两个参数node和data，分别表示当前节点的 Node 对象和当前节点的数据 -->
@@ -12,16 +12,16 @@
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown>
+              <el-dropdown @command="operateDept">
                 <!-- 显示区域内容 -->
                 <span class="el-dropdown-link ">
                   操作<i class="el-icon-arrow-down el-icon--right" />
                 </span>
                 <!-- 下拉菜单选项 -->
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item>添加子部门</el-dropdown-item>
-                  <el-dropdown-item>编辑部门</el-dropdown-item>
-                  <el-dropdown-item>删除</el-dropdown-item>
+                  <el-dropdown-item command="add">添加子部门</el-dropdown-item>
+                  <el-dropdown-item command="edit">编辑部门</el-dropdown-item>
+                  <el-dropdown-item command="del">删除</el-dropdown-item>
 
                 </el-dropdown-menu>
               </el-dropdown>
@@ -31,16 +31,23 @@
 
       </el-tree>
     </div>
+    <!-- 防止弹层组件 -->
+    <!-- .sync表示会接收子组件的事件 update:showDialog -->
+    <AddDept :show-dialog="showDialog" @update:showDialog="showDialog = $event" />
   </div>
 </template>
 <script>
 // 引入获取部门api
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+// 引入弹窗组件
+import AddDept from './components/add-dept.vue'
 export default {
   name: 'Department',
+  components: { AddDept },
   data() {
     return {
+      showDialog: false, // 控制弹窗的显示与隐藏
       depts: [], // 数据属性
 
       defaultProps: {
@@ -59,7 +66,15 @@ export default {
     async getDepartment() {
       const result = await getDepartment()
       this.depts = transListToTreeData(result, 0)
+    },
+    // 部门相关操作
+    operateDept(type) {
+      if (type === 'add') {
+        // 显示弹层组件
+        this.showDialog = true
+      }
     }
+
   }
 }
 </script>
