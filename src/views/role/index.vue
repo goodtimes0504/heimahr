@@ -30,7 +30,7 @@
       <!-- 放置分页组件 -->
       <el-row type="flex" justify="end" align="middle" style="height: 60px">
         <!-- 最后不要写逗号 不然白屏了就 -->
-        <el-pagination layout="prev,pager,next" />
+        <el-pagination :page-size="pageParams.pagesize" :total="pageParams.total" :current-page="pageParams.page" layout="prev,pager,next" @current-change="changePage" />
       </el-row>
     </div>
   </div>
@@ -43,7 +43,13 @@ export default {
   name: 'Role',
   data() {
     return {
-      list: []
+      list: [],
+      // 将分页信息放到一个对象里
+      pageParams: {
+        page: 1, // 当前页码
+        pagesize: 5, // 每页显示条数
+        total: 0 // 初始值是0
+      }
     }
   },
   created() {
@@ -51,8 +57,15 @@ export default {
   },
   methods: {
     async getRoleList() {
-      const { rows } = await getRoleList()// 如果不传页码和页容量等params参数，默认是第一页，每页10条数据
+      const { rows, total } = await getRoleList(this.pageParams)// 如果不传页码和页容量等params参数，默认是第一页，每页10条数据
       this.list = rows
+      this.pageParams.total = total
+    },
+    changePage(newPage) {
+      // alert(newPage)
+      // 当页码发生变化的时候 重新获取数据
+      this.pageParams.page = newPage
+      this.getRoleList()
     }
   }
 }
