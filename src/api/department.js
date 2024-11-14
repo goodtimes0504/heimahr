@@ -26,3 +26,12 @@ export function getDepartmentDetail(id) {
     url: `/company/department/${id}`
   })
 }
+// 封装更新部门详情api接口
+
+export function updateDepartment(data) {
+  return request({
+    method: 'put',
+    url: `/company/department/${data.id}`,
+    data
+  })
+}

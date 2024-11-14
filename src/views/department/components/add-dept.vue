@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="添加部门" :visible="localShowDialog" @close="close">
+  <el-dialog :title="showTitle" :visible="localShowDialog" @close="close">
     <!-- 放置弹层内容 -->
     <el-form ref="addDept" :model="formData" :rules="rules" label-width="120px">
       <el-form-item prop="name" label="部门名称">
@@ -41,6 +41,8 @@ import { getManagerList } from '@/api/department'
 import { addDepartment } from '@/api/department'
 // 调用获取部门详情接口
 import { getDepartmentDetail } from '@/api/department'
+// 调用更新部门接口
+import { updateDepartment } from '@/api/department'
 
 export default {
   props: {
@@ -55,7 +57,6 @@ export default {
 
     }
   },
-
   data() {
     return {
       managerList: [], // 存储负责人列表数据
@@ -121,6 +122,11 @@ export default {
       }
     }
   },
+  computed: {
+    showTitle() {
+      return this.formData.id ? '编辑部门' : '新增部门'
+    }
+  },
   watch: {
     showDialog(newValue) {
       this.localShowDialog = newValue
@@ -132,7 +138,17 @@ export default {
   methods: {
     close() {
       // 重置表单数据
-      this.$refs.addDept.resetFields()
+      // 但是只能重置模板中绑定的数据 不能重置没有绑定的 id
+      // 所以推荐用重新赋值的方法
+
+      this.formData = {
+        code: '', // 部门编码
+        introduce: '', // 部门介绍
+        managerId: '', // 部门负责人id
+        name: '', // 部门名称
+        pid: ''// 父部门id
+      }
+      //   this.$refs.addDept.resetFields()
       // 要修改父组件的showDialog属性，所以需要使用$emit
       this.$emit('update:showDialog', false)
     },
@@ -144,11 +160,20 @@ export default {
       // 校验函数是validate不是validator！！！！！
       this.$refs.addDept.validate(async(isOk) => {
         if (isOk) {
-          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          let msg = '新增'
+          // 通过this.formData.id判断是新增还是修改
+          if (this.formData.id) {
+            // 编辑模式 调用编辑接口
+            msg = '编辑'
+            await updateDepartment(this.formData)
+          } else {
+          // 新增模式 调用新增接口
+            await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          }
           // 通知父组件更新
           this.$emit('updateDepartment')
           // 提示消息
-          this.$message.success('新增部门成功')
+          this.$message.success(`${msg}部门成功`)
           // 关闭弹层并重置表单
           this.close()
         }
