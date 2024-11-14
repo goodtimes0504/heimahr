@@ -35,7 +35,8 @@
     <!-- 防止弹层组件 -->
     <!-- .sync表示会接收子组件的事件 update:showDialog -->
     <!-- :xxx="xxx"前面是属性名 后面是变量的值 -->
-    <AddDept :show-dialog="showDialog" :current-node-id="currentNodeId" @update:showDialog="showDialog = $event" @updateDepartment="getDepartment" />
+    <!-- ref既可以获取dom对象也可以获取自定义组件的示例对象 -->
+    <AddDept ref="addDept" :show-dialog="showDialog" :current-node-id="currentNodeId" @update:showDialog="showDialog = $event" @updateDepartment="getDepartment" />
   </div>
 </template>
 <script>
@@ -74,9 +75,19 @@ export default {
     operateDept(type, id) {
       console.log(type, id)
       if (type === 'add') {
+        // 添加部门场景
         // 显示弹层组件
         this.showDialog = true
         this.currentNodeId = id
+      } else if (type === 'edit') {
+        // 编辑部门场景
+        this.showDialog = true
+        this.currentNodeId = id// 记录id 用它获取弹层数据 然后回显
+        // 子组件里prop获取currentNodeId 是异步操作得等他更新完才能执行下面函数 此处没有写await的地方所以用了nextTick
+        this.$nextTick(() => {
+          // 父组件调用子组件方法获取数据
+          this.$refs.addDept.getDepartmentDetail() // 获取子组件示例对象this.$refs.addDept等同于子组件的this
+        })
       }
     }
 

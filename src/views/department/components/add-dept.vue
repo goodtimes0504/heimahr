@@ -9,7 +9,7 @@
         <el-input v-model="formData.code" placeholder="2-10个字符" style="width:80%" size="mini" />
       </el-form-item>
       <el-form-item prop="manager" label="部门负责人">
-        <el-select v-model="formData.managerId" placeholder="请选择负责人" style="width:80%" size="mini">
+        <el-select v-model="formData.managerId" placeholder="请选择负责人" style="width:80%" size="mini"> 
           <!-- 下拉选项 循环负责人id label是显示的字段 value是实际存储的字段-->
           <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id">
             {{ item.username }}
@@ -39,6 +39,8 @@ import { getDepartment } from '@/api/department'
 import { getManagerList } from '@/api/department'
 // 调用新增部门接口
 import { addDepartment } from '@/api/department'
+// 调用获取部门详情接口
+import { getDepartmentDetail } from '@/api/department'
 
 export default {
   props: {
@@ -144,6 +146,11 @@ export default {
           this.close()
         }
       })
+    },
+    // 获取回显部门详情
+    async getDepartmentDetail() {
+      this.formData = await getDepartmentDetail(this.currentNodeId)
+      //   console.log(result)
     }
 
   }
