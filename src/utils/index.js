@@ -115,3 +115,25 @@ export function param2Obj(url) {
   })
   return obj
 }
+/**
+ * 列表型数据 转化成树形数据
+ *
+*/
+// 递归 rootValue是根节点的id
+// 原理是遍历数组 找到当前节点的子节点 然后递归
+// 传入数组 和根节点的id 遍历数组 如果当前节点的pid等于根节点的id 就把当前节点放入数组中
+// 然后递归找当前节点的子节点 找完之后
+export function transListToTreeData(list, rootValue) {
+  const array = []
+  list.forEach(item => {
+    if (item.pid === rootValue) {
+      // 如果找到一个子节点 就放到新数组里
+      array.push(item)
+      // 递归找当前节点的子节点 原理是 遍历数组 如果里面有某个节点的pid等于根节点的id 就把那个节点放入数组中
+      // 然后把那个节点作为根节点 继续递归 直到找不到子节点 就返回数组 然后把数组放入当前节点的children中
+      const children = transListToTreeData(list, item.id)
+      item.children = children
+    }
+  })
+  return array
+}
