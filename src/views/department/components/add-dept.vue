@@ -9,7 +9,7 @@
         <el-input v-model="formData.code" placeholder="2-10个字符" style="width:80%" size="mini" />
       </el-form-item>
       <el-form-item prop="manager" label="部门负责人">
-        <el-select v-model="formData.managerId" placeholder="请选择负责人" style="width:80%" size="mini"> 
+        <el-select v-model="formData.managerId" placeholder="请选择负责人" style="width:80%" size="mini">
           <!-- 下拉选项 循环负责人id label是显示的字段 value是实际存储的字段-->
           <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id">
             {{ item.username }}
@@ -73,10 +73,13 @@ export default {
           { min: 2, max: 10, message: '部门编码长度为2-10个字符', trigger: 'blur' },
           { trigger: 'blur', validator: async(rule, value, callback) => {
             // 自定义校验模式 value是输入的编码 callback是回调函数
-            const result = await getDepartment()
+            let result = await getDepartment()
+            // 判断是否是编辑模式
+            if (this.formData.id) {
+              result = result.filter(item => item.id !== this.formData.id)
+            }
             // result数组中是否存在value对应的索引
             // some方法作用是遍历数组，如果数组中存在一个元素满足条件，则返回true，否则返回false
-
             if (result.some(item => item.code === value)) {
               callback(new Error('部门编码已存在,请重新输入'))
             } else {
@@ -98,7 +101,11 @@ export default {
           { min: 2, max: 10, message: '部门名称长度为2-10个字符', trigger: 'blur' },
           { trigger: 'blur', validator: async(rule, value, callback) => {
             // 自定义校验模式 value是输入的编码 callback是回调函数
-            const result = await getDepartment()
+            let result = await getDepartment()
+            // 如果是修改操作，需要排除当前修改的数据
+            if (this.formData.id) {
+              result = result.filter(item => item.id !== this.formData.id)
+            }
             // result数组中是否存在value对应的索引
             // some方法作用是遍历数组，如果数组中存在一个元素满足条件，则返回true，否则返回false
 
