@@ -23,8 +23,8 @@
       <el-form-item>
         <el-row type="flex" justify="center">
           <el-col :span="12">
-            <el-button type="primary" size="mini">提交</el-button>
-            <el-button size="mini">取消</el-button>
+            <el-button type="primary" size="mini" @click="btnOk">确认</el-button>
+            <el-button size="mini" @click="close">取消</el-button>
           </el-col>
         </el-row>
       </el-form-item>
@@ -37,6 +37,8 @@
 import { getDepartment } from '@/api/department'
 // 调用获取负责人列表
 import { getManagerList } from '@/api/department'
+// 调用新增部门接口
+import { addDepartment } from '@/api/department'
 
 export default {
   props: {
@@ -120,11 +122,28 @@ export default {
   },
   methods: {
     close() {
+      // 重置表单数据
+      this.$refs.addDept.resetFields()
       // 要修改父组件的showDialog属性，所以需要使用$emit
       this.$emit('update:showDialog', false)
     },
     async getManagerList() {
       this.managerList = await getManagerList()
+    },
+    // 点击确定按钮
+    btnOk() {
+      // 校验函数是validate不是validator！！！！！
+      this.$refs.addDept.validate(async(isOk) => {
+        if (isOk) {
+          await addDepartment({ ...this.formData, pid: this.currentNodeId })
+          // 通知父组件更新
+          this.$emit('updateDepartment')
+          // 提示消息
+          this.$message.success('新增部门成功')
+          // 关闭弹层并重置表单
+          this.close()
+        }
+      })
     }
 
   }

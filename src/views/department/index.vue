@@ -35,7 +35,7 @@
     <!-- 防止弹层组件 -->
     <!-- .sync表示会接收子组件的事件 update:showDialog -->
     <!-- :xxx="xxx"前面是属性名 后面是变量的值 -->
-    <AddDept :show-dialog="showDialog" :current-node-id="currentNodeId" @update:showDialog="showDialog = $event" />
+    <AddDept :show-dialog="showDialog" :current-node-id="currentNodeId" @update:showDialog="showDialog = $event" @updateDepartment="getDepartment" />
   </div>
 </template>
 <script>

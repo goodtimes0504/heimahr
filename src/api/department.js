@@ -12,3 +12,11 @@ export function getManagerList() {
     url: '/sys/user/simple'
   })
 }
+// 新增部门
+export function addDepartment(data) {
+  return request({
+    method: 'post',
+    url: '/company/department',
+    data
+  })
+}
