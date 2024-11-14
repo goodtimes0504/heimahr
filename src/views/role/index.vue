@@ -36,15 +36,22 @@
     <!-- 这里如果不加.sync就无法点击右上角的叉叉来关闭弹窗 因为父组件是这个index.vue子组件是弹窗 不加.sync修饰符 就无法通过子组件来给父组件传递数据来关闭弹窗 -->
     <el-dialog width="500px" title="新增角色" :visible.sync="showDialog">
       <!-- 表单内容  -->
-      <el-form label-width="120px">
-        <el-form-item label="角色名称">
-          <el-input style="width:300px" size="mini" />
+      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name" style="width:300px" size="mini" />
         </el-form-item>
+        <!-- 下面这个不需要校验 所以就不用写prop="state"属性 -->
         <el-form-item label="启用">
-          <el-switch size="mini" />
+          <!-- 当使用冒号 : 时，如 :active-value="1"，active-value 会被正确地解析为一个动态的数据绑定表达式，它会根据组件实例中相应数据属性的值来动态地确定 el-switch 处于激活状态时所对应的真实值。这样，el-switch 就能与 v-model 以及组件中的数据进行正确的交互，实现预期的功能。如果前面不加冒号 那么它就是字符串了 不能正确的跟随v-model的值来变化了 -->
+          <el-switch
+            v-model="roleForm.state"
+            :active-value="1"
+            :inactive-value="0"
+            size="mini"
+          />
         </el-form-item>
-        <el-form-item label="角色描述">
-          <el-input type="textarea" :rows="3" style="width:300px" size="mini" />
+        <el-form-item label="角色描述" prop="description">
+          <el-input v-model="roleForm.description" type="textarea" :rows="3" style="width:300px" size="mini" />
         </el-form-item>
         <el-form-item>
           <el-row type="flex" justify="center">
@@ -74,6 +81,22 @@ export default {
         page: 1, // 当前页码
         pagesize: 5, // 每页显示条数
         total: 0 // 初始值是0
+      },
+      // 新增角色表单数据
+      roleForm: {
+        name: '',
+        description: '',
+        state: '0'// number类型 默认未启用 0代表未启用 1代表启用
+      },
+      rules: {
+        name: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' },
+          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
+        ],
+        description: [
+          { required: true, message: '请输入角色描述', trigger: 'blur' },
+          { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
+        ]
       }
     }
   },
