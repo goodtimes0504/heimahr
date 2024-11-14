@@ -9,7 +9,12 @@
         <el-input v-model="formData.code" placeholder="2-10个字符" style="width:80%" size="mini" />
       </el-form-item>
       <el-form-item prop="manager" label="部门负责人">
-        <el-select v-model="formData.manager" placeholder="请选择负责人" style="width:80%" size="mini" />
+        <el-select v-model="formData.managerId" placeholder="请选择负责人" style="width:80%" size="mini">
+          <!-- 下拉选项 循环负责人id label是显示的字段 value是实际存储的字段-->
+          <el-option v-for="item in managerList" :key="item.id" :label="item.username" :value="item.id">
+            {{ item.username }}
+          </el-option>
+        </el-select>
       </el-form-item>
       <el-form-item prop="introduce" label="部门介绍">
         <el-input v-model="formData.introduce" type="textarea" placeholder="1-100个字符" :rows="4" style="width:80%" />
@@ -30,6 +35,8 @@
 <script>
 // 调用获取部门列表的api
 import { getDepartment } from '@/api/department'
+// 调用获取负责人列表
+import { getManagerList } from '@/api/department'
 
 export default {
   props: {
@@ -42,11 +49,12 @@ export default {
 
   data() {
     return {
-      localShowDialog: this.showDialog,
+      managerList: [], // 存储负责人列表数据
+      localShowDialog: this.showDialog, // 控制对话框显示与隐藏
       formData: {
         code: '', // 部门编码
         introduce: '', // 部门介绍
-        manageId: '', // 部门负责人id
+        managerId: '', // 部门负责人id
         name: '', // 部门名称
         pid: ''// 父部门id
       },
@@ -102,11 +110,18 @@ export default {
       this.localShowDialog = newValue
     }
   },
+  created() {
+    this.getManagerList()
+  },
   methods: {
     close() {
       // 要修改父组件的showDialog属性，所以需要使用$emit
       this.$emit('update:showDialog', false)
+    },
+    async getManagerList() {
+      this.managerList = await getManagerList()
     }
+
   }
 }
 </script>
