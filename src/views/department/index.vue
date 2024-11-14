@@ -11,7 +11,7 @@
           <el-row style="width:100%;height:40px" type="flex" justify="space-between" align="middle">
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
-              <span class="tree-manager">{{ data.manageName }}</span>
+              <span class="tree-manager">{{ data.managerName }}</span>
               <el-dropdown>
                 <!-- 显示区域内容 -->
                 <span class="el-dropdown-link ">
@@ -34,24 +34,30 @@
   </div>
 </template>
 <script>
+// 引入获取部门api
+import { getDepartment } from '@/api/department'
 export default {
   name: 'Department',
   data() {
     return {
-      depts: [
-        { name: 'Heima', manageName: '刘备', children: [
-          { name: '总裁办', manageName: '张三' },
-          { name: '行政部', manageName: '李四' },
-          { name: '人事部', manageName: '王五' }
+      depts: [], // 数据属性
 
-        ]
-        }
-
-      ], // 数据属性
       defaultProps: {
         label: 'name', // 要显示的字段的名字
         children: 'children'// 读取子节点的字段名
       }
+    }
+  },
+  created() {
+    this.getDepartment()// 在页面创建的时候调用这个方法
+  },
+
+  methods: {
+    // 提前封装好一个获取部门的方法方便后期复用
+
+    async getDepartment() {
+      const result = await getDepartment()
+      this.depts = result
     }
   }
 }
@@ -62,7 +68,7 @@ export default {
   font-size: 14px;
 }
 .tree-manager{
-  width: 50px;
+  width: 80px;
   display:inline-block;
   margin:10px
 }
