@@ -34,14 +34,14 @@
       </el-row>
     </div>
     <!-- 这里如果不加.sync就无法点击右上角的叉叉来关闭弹窗 因为父组件是这个index.vue子组件是弹窗 不加.sync修饰符 就无法通过子组件来给父组件传递数据来关闭弹窗 -->
-    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog">
+    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog" @close="btnCancel">
       <!-- 表单内容  -->
       <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="roleForm.name" style="width:300px" size="mini" />
         </el-form-item>
-        <!-- 下面这个不需要校验 所以就不用写prop="state"属性 -->
-        <el-form-item label="启用">
+        <!-- 下面这个不需要校验 所以就不用写prop="state"属性 但是如果要重置表单 就又需要prop了 所以还是得写-->
+        <el-form-item label="启用" prop="state">
           <!-- 当使用冒号 : 时，如 :active-value="1"，active-value 会被正确地解析为一个动态的数据绑定表达式，它会根据组件实例中相应数据属性的值来动态地确定 el-switch 处于激活状态时所对应的真实值。这样，el-switch 就能与 v-model 以及组件中的数据进行正确的交互，实现预期的功能。如果前面不加冒号 那么它就是字符串了 不能正确的跟随v-model的值来变化了 -->
           <el-switch
             v-model="roleForm.state"
@@ -56,8 +56,8 @@
         <el-form-item>
           <el-row type="flex" justify="center">
             <el-col :span="12">
-              <el-button type="primary" sizi="mini">确认</el-button>
-              <el-button sizi="mini">取消</el-button>
+              <el-button type="primary" sizi="mini" @click="btnOk">确认</el-button>
+              <el-button sizi="mini" @click="btnCancel">取消</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -68,7 +68,8 @@
 <script>
 // 导入获取角色列表的接口
 import { getRoleList } from '@/api/role'
-
+// 导入新增角色的接口
+import { addRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -114,7 +115,31 @@ export default {
       // 当页码发生变化的时候 重新获取数据
       this.pageParams.page = newPage
       this.getRoleList()
+    },
+    btnOk() {
+      this.$refs.roleForm.validate(async valid => {
+        if (valid) {
+          // 校验通过
+          // 发送请求
+          await addRole(this.roleForm)
+          // 因为前面封装的时候直接获取的data 获取不到code了 所以直接给成功提示吧
+          // 如果状态码是40001 意思是后端返回数据 并提示成功
+          this.$message.success('添加成功')// 给客户提示
+          this.getRoleList()// 重新获取数据
+          this.btnCancel()// 关闭弹框并重置表单
+          // } else {
+          //   this.$message.error('添加失败')// 客户端返回数据并提示失败的情况下提示客户添加失败
+          // }
+        } else {
+          this.$message.error('校验失败')// 校验不通过的情况下提示校验失败
+        }
+      })
+    },
+    btnCancel() {
+      this.$refs.roleForm.resetFields()// 重置表单
+      this.showDialog = false// 关闭弹框
     }
+
   }
 }
 </script>

@@ -9,3 +9,11 @@ export function getRoleList(params) {
     // 查询参数是params 请求体是data 如post请求
   })
 }
+// 封装新增角色接口
+export function addRole(data) {
+  return request({
+    url: '/sys/role',
+    method: 'post',
+    data
+  })
+}
