@@ -12,7 +12,8 @@
             <el-col>{{ data.name }}</el-col>
             <el-col :span="4">
               <span class="tree-manager">{{ data.managerName }}</span>
-              <el-dropdown @command="operateDept">
+              <!-- $event实参 默认表示类型 默认自带的 @command="operateDept($event)"和@command="operateDept"是一样的 -->
+              <el-dropdown @command="operateDept($event,data.id)">
                 <!-- 显示区域内容 -->
                 <span class="el-dropdown-link ">
                   操作<i class="el-icon-arrow-down el-icon--right" />
@@ -33,7 +34,8 @@
     </div>
     <!-- 防止弹层组件 -->
     <!-- .sync表示会接收子组件的事件 update:showDialog -->
-    <AddDept :show-dialog="showDialog" @update:showDialog="showDialog = $event" />
+    <!-- :xxx="xxx"前面是属性名 后面是变量的值 -->
+    <AddDept :show-dialog="showDialog" :current-node-id="currentNodeId" @update:showDialog="showDialog = $event" />
   </div>
 </template>
 <script>
@@ -47,6 +49,7 @@ export default {
   components: { AddDept },
   data() {
     return {
+      currentNodeId: null, // 当前点击的节点id
       showDialog: false, // 控制弹窗的显示与隐藏
       depts: [], // 数据属性
 
@@ -68,10 +71,12 @@ export default {
       this.depts = transListToTreeData(result, 0)
     },
     // 部门相关操作
-    operateDept(type) {
+    operateDept(type, id) {
+      console.log(type, id)
       if (type === 'add') {
         // 显示弹层组件
         this.showDialog = true
+        this.currentNodeId = id
       }
     }
 

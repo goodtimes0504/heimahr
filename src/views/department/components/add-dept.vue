@@ -42,7 +42,12 @@ export default {
   props: {
     showDialog: {
       type: Boolean,
-      required: false
+      default: false
+    },
+    // 接收父组件传过来的部门id，用于提交数据时携带 父部门id 就是pid
+    currentNodeId: {
+      type: Number,
+      default: null
 
     }
   },
