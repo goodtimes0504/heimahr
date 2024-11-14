@@ -3,7 +3,7 @@
     <div class="app-container">
       <!-- 角色管理内容 -->
       <div class="role-operate">
-        <el-button size="mini" type="primary"> 添加角色 </el-button>
+        <el-button size="mini" type="primary" @click="showDialog=true"> 添加角色 </el-button>
       </div>
       <!-- 放置table组件 -->
       <el-table :data="list">
@@ -33,6 +33,29 @@
         <el-pagination :page-size="pageParams.pagesize" :total="pageParams.total" :current-page="pageParams.page" layout="prev,pager,next" @current-change="changePage" />
       </el-row>
     </div>
+    <!-- 这里如果不加.sync就无法点击右上角的叉叉来关闭弹窗 因为父组件是这个index.vue子组件是弹窗 不加.sync修饰符 就无法通过子组件来给父组件传递数据来关闭弹窗 -->
+    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog">
+      <!-- 表单内容  -->
+      <el-form label-width="120px">
+        <el-form-item label="角色名称">
+          <el-input style="width:300px" size="mini" />
+        </el-form-item>
+        <el-form-item label="启用">
+          <el-switch size="mini" />
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input type="textarea" :rows="3" style="width:300px" size="mini" />
+        </el-form-item>
+        <el-form-item>
+          <el-row type="flex" justify="center">
+            <el-col :span="12">
+              <el-button type="primary" sizi="mini">确认</el-button>
+              <el-button sizi="mini">取消</el-button>
+            </el-col>
+          </el-row>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -44,6 +67,8 @@ export default {
   data() {
     return {
       list: [],
+      // 控制新增角色弹窗的显示和隐藏
+      showDialog: false,
       // 将分页信息放到一个对象里
       pageParams: {
         page: 1, // 当前页码
