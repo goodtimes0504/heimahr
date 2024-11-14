@@ -43,6 +43,8 @@
 // 引入获取部门api
 import { getDepartment } from '@/api/department'
 import { transListToTreeData } from '@/utils'
+// 引入删除部门api
+import { delDepartment } from '@/api/department'
 // 引入弹窗组件
 import AddDept from './components/add-dept.vue'
 export default {
@@ -87,6 +89,26 @@ export default {
         this.$nextTick(() => {
           // 父组件调用子组件方法获取数据
           this.$refs.addDept.getDepartmentDetail() // 获取子组件示例对象this.$refs.addDept等同于子组件的this
+        })
+      } else {
+        // 删除部门场景
+        this.$confirm('确定要删除该部门吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(async() => {
+          // 点击确认之后调取接口删除 并提示用户 并重新拉取数据
+          await delDepartment(id)
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+          this.getDepartment()
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
         })
       }
     }

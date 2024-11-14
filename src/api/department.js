@@ -35,3 +35,11 @@ export function updateDepartment(data) {
     data
   })
 }
+// 封装删除部门详情api接口
+export function delDepartment(id) {
+  return request({
+    method: 'delete',
+    url: `/company/department/${id}`
+  })
+}
+
