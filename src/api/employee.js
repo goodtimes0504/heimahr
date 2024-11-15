@@ -23,3 +23,12 @@ export function getExportTemplate() {
 
   })
 }
+// 上传excel的接口
+export function uploadExcel(data) {
+  return request({
+    url: '/sys/user/import',
+    method: 'post',
+    data // 上传的excel文件 是form-data类型的数据
+
+  })
+}
