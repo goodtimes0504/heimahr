@@ -13,14 +13,14 @@
           <el-button size="mini">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
-        <el-table>
-          <el-table-column align="center" label="头像" />
-          <el-table-column label="姓名" />
-          <el-table-column label="手机号" sortable />
-          <el-table-column label="工号" sortable />
-          <el-table-column label="聘用形式" />
-          <el-table-column label="部门" />
-          <el-table-column label="入职时间" sortable="" />
+        <el-table :data="list">
+          <el-table-column prop="staffPhoto" align="center" label="头像" />
+          <el-table-column prop="username" label="姓名" />
+          <el-table-column prop="mobile" label="手机号" sortable />
+          <el-table-column prop="workNumber" label="工号" sortable />
+          <el-table-column prop="formOfEmployment" label="聘用形式" />
+          <el-table-column prop="departmentName" label="部门" />
+          <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
           <el-table-column label="操作" width="280px">
             <template>
               <el-button type="text" size="mini">查看</el-button>
@@ -46,6 +46,9 @@ import { getDepartment } from '@/api/department'
 
 // 引入转化树形数据的方法
 import { transListToTreeData } from '@/utils/index'
+
+// 引入获取员工api
+import { getEmployeeList } from '@/api/employee'
 export default {
   name: 'Employee',
   data() {
@@ -58,7 +61,9 @@ export default {
       // 存储查询对象 根据接口文档放属性
       queryParams: {
         departmentId: null
-      }
+      },
+      // 存储员工列表数据
+      list: []
     }
   },
   created() {
@@ -77,10 +82,18 @@ export default {
         // 此时意味着树的渲染完毕了
         this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
       })
+      // 这个时候 参数才记录了id  所以此时才可以调用获取员工列表的方法
+      this.getEmployeeList()
     },
     selectNode(node) {
       // console.log(node)
-      this.queryParams.departmentId = node.id
+      this.queryParams.departmentId = node.id // 重新记录了查询id
+      this.getEmployeeList()// 重新获取员工列表
+    },
+    // 获取员工列表方法
+    async getEmployeeList() {
+      const { rows } = await getEmployeeList(this.queryParams)
+      this.list = rows
     }
   }
 }
