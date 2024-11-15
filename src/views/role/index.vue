@@ -7,22 +7,43 @@
       </div>
       <!-- 放置table组件 -->
       <el-table :data="list">
-        <el-table-column prop="name" align="center" width="200px" label="角色" />
+        <el-table-column prop="name" align="center" width="200px" label="角色">
+          <template v-slot="{row}">
+            <!-- 条件判断 -->
+            <el-input v-if="row.isEdit" size="mini" />
+            <span v-else>{{ row.name }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="state" align="center" width="200px" label="启用">
           <!-- 自定义列结构 -->
           <template v-slot="{row}">
             <!-- {{ row }}的值{ "id": 1, "name": "系统管理员", "description": "管理整合平台，可以操作企业所有功能", "state": 1 } -->
+            <el-switch v-if="row.isEdit" />
             <!-- {{ row.state===1?"已启用":"未启用" }}这么写判断不了 row.state不等于1或者0的情况 所以要用下面的写法 -->
-            <span>{{ row.state===1?"已启用":row.state===0?"未启用":"无" }}</span>
+            <span v-else>{{ row.state===1?"已启用":row.state===0?"未启用":"无" }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="description" align="center" label="描述" />
+        <el-table-column prop="description" align="center" label="描述">
+          <template v-slot="{row}">
+            <el-input v-if="row.isEdit" type="textarea" />
+            <span v-else>{{ row.description }}</span>
+          </template>
+
+        </el-table-column>
         <el-table-column align="center" label="操作">
           <!-- 放置操作按钮 template不产生任何实质内容 但是有标签的作用-->
-          <template>
-            <el-button size="mini" type="text">分配权限</el-button>
-            <el-button size="mini" type="text">编辑</el-button>
-            <el-button size="mini" type="text">删除</el-button>
+          <template v-slot="{row}">
+            <template v-if="row.isEdit">
+              <!-- 编辑状态 -->
+              <el-button type="primary" size="mini">确定</el-button>
+              <el-button size="mini">取消</el-button>
+            </template>
+            <template v-else>
+              <!-- 非编辑状态 -->
+              <el-button size="mini" type="text">分配权限</el-button>
+              <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
+              <el-button size="mini" type="text">删除</el-button>
+            </template>
           </template>
 
         </el-table-column>
@@ -109,6 +130,13 @@ export default {
       const { rows, total } = await getRoleList(this.pageParams)// 如果不传页码和页容量等params参数，默认是第一页，每页10条数据
       this.list = rows
       this.pageParams.total = total
+      // 针对每一行数据添加一个编辑标记
+      this.list.forEach(item => {
+        // item.isEdit = false
+        // 数据响应式的问题 数据变化 视图更新 但是添加的属性不具备响应式特点
+        // this.$set(目标对象,属性名,初始属性值) 可以针对目标对象添加的属性 添加响应式
+        this.$set(item, 'isEdit', false)
+      })
     },
     changePage(newPage) {
       // alert(newPage)
@@ -138,6 +166,11 @@ export default {
     btnCancel() {
       this.$refs.roleForm.resetFields()// 重置表单
       this.showDialog = false// 关闭弹框
+    },
+    btnEditRow(row) {
+      // 点击编辑按钮的时候 给当前行添加一个编辑标记
+      row.isEdit = true
+      console.log(row)
     }
 
   }
