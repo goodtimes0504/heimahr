@@ -49,7 +49,12 @@
                 type="text"
                 @click="btnEditRow(row)"
               >编辑</el-button>
-              <el-button size="mini" type="text">删除</el-button>
+              <el-popconfirm
+                title="这是一段内容确定删除吗？"
+                @onConfirm="confirmDel(row.id)"
+              >
+                <el-button slot="reference" style="margin-left:10px" size="mini" type="text">删除</el-button>
+              </el-popconfirm>
             </template>
           </template>
         </el-table-column>
@@ -125,6 +130,8 @@ import { getRoleList } from '@/api/role'
 import { addRole } from '@/api/role'
 // 导入更新角色的接口
 import { updateRole } from '@/api/role'
+// 导入删除角色的接口
+import { delRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -243,6 +250,17 @@ export default {
     // 编辑时点击取消
     btnEditCancel(row) {
       row.isEdit = false
+    },
+    // 删除按钮确定
+    async confirmDel(id) {
+      // alert(id)
+      await delRole(id)
+      this.$message.success('删除成功')
+      // 删除的如果是最后一个
+      if (this.list.length === 1) {
+        this.pageParams.page--
+      }
+      this.getRoleList()
     }
   }}
 

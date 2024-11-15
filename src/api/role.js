@@ -25,3 +25,10 @@ export function updateRole(data) {
     data
   })
 }
+// 封装删除角色接口
+export function delRole(id) {
+  return request({
+    url: `/sys/role/${id}`,
+    method: 'delete'
+  })
+}
