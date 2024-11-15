@@ -48,10 +48,15 @@
           <el-table-column prop="departmentName" label="部门" />
           <el-table-column prop="timeOfEntry" label="入职时间" sortable="" />
           <el-table-column label="操作" width="280px">
-            <template>
+            <template v-slot="{row}">
               <el-button type="text" size="mini">查看</el-button>
               <el-button type="text" size="mini">角色</el-button>
-              <el-button type="text" size="mini">删除</el-button>
+              <el-popconfirm
+                title="确认删除该行数据吗？"
+                @onConfirm="confirmDel(row.id)"
+              >
+                <el-button slot="reference" style="margin-left:10px" size="mini" type="text">删除</el-button>
+              </el-popconfirm>
             </template>
           </el-table-column>
 
@@ -84,6 +89,8 @@ import { exportEmployee } from '@/api/employee'
 import FileSaver from 'file-saver'
 // 引入导入excel的弹窗组件
 import ImportExcel from './components/import-excel.vue'
+// 引入删除员工的api
+import { delEmployee } from '@/api/employee'
 export default {
   name: 'Employee',
   components: {
@@ -166,8 +173,19 @@ export default {
       // console.log(result)
       // FileSaver.saveAs(blob对象,文件名称)
       FileSaver.saveAs(result, '员工信息表.xlsx')// 将返回的blob对象保存为员工信息表.xlsx
+    },
+    async confirmDel(id) {
+      // 调用删除员工的接口
+      await delEmployee(id)
+      if (this.list.length === 1) {
+        // 当删除的是最后一页的最后一条数据 并且当前页大于1  此时应该将当前页减1  否则会出现数据错乱
+        if (this.queryParams.page > 1) {
+          this.queryParams.page--
+        }
+      }
+      this.getEmployeeList() // 重新获取员工列表
+      this.$message.success('删除成功')
     }
-
   }
 }
 </script>
