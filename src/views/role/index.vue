@@ -3,36 +3,39 @@
     <div class="app-container">
       <!-- 角色管理内容 -->
       <div class="role-operate">
-        <el-button size="mini" type="primary" @click="showDialog=true"> 添加角色 </el-button>
+        <el-button size="mini" type="primary" @click="showDialog = true">
+          添加角色
+        </el-button>
       </div>
       <!-- 放置table组件 -->
       <el-table :data="list">
         <el-table-column prop="name" align="center" width="200px" label="角色">
-          <template v-slot="{row}">
+          <template v-slot="{ row }">
             <!-- 条件判断 -->
-            <el-input v-if="row.isEdit" size="mini" />
+            <el-input v-if="row.isEdit" v-model="row.editRow.name" size="mini" />
             <span v-else>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="state" align="center" width="200px" label="启用">
           <!-- 自定义列结构 -->
-          <template v-slot="{row}">
+          <template v-slot="{ row }">
             <!-- {{ row }}的值{ "id": 1, "name": "系统管理员", "description": "管理整合平台，可以操作企业所有功能", "state": 1 } -->
-            <el-switch v-if="row.isEdit" />
+            <el-switch v-if="row.isEdit" v-model="row.editRow.state" :active-value="1" :inactive-value="0" />
             <!-- {{ row.state===1?"已启用":"未启用" }}这么写判断不了 row.state不等于1或者0的情况 所以要用下面的写法 -->
-            <span v-else>{{ row.state===1?"已启用":row.state===0?"未启用":"无" }}</span>
+            <span v-else>{{
+              row.state === 1 ? "已启用" : row.state === 0 ? "未启用" : "无"
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="description" align="center" label="描述">
-          <template v-slot="{row}">
-            <el-input v-if="row.isEdit" type="textarea" />
+          <template v-slot="{ row }">
+            <el-input v-if="row.isEdit" v-model="row.editRow.description" type="textarea" size="mini" />
             <span v-else>{{ row.description }}</span>
           </template>
-
         </el-table-column>
         <el-table-column align="center" label="操作">
           <!-- 放置操作按钮 template不产生任何实质内容 但是有标签的作用-->
-          <template v-slot="{row}">
+          <template v-slot="{ row }">
             <template v-if="row.isEdit">
               <!-- 编辑状态 -->
               <el-button type="primary" size="mini">确定</el-button>
@@ -41,25 +44,44 @@
             <template v-else>
               <!-- 非编辑状态 -->
               <el-button size="mini" type="text">分配权限</el-button>
-              <el-button size="mini" type="text" @click="btnEditRow(row)">编辑</el-button>
+              <el-button
+                size="mini"
+                type="text"
+                @click="btnEditRow(row)"
+              >编辑</el-button>
               <el-button size="mini" type="text">删除</el-button>
             </template>
           </template>
-
         </el-table-column>
       </el-table>
       <!-- 放置分页组件 -->
       <el-row type="flex" justify="end" align="middle" style="height: 60px">
         <!-- 最后不要写逗号 不然白屏了就 -->
-        <el-pagination :page-size="pageParams.pagesize" :total="pageParams.total" :current-page="pageParams.page" layout="prev,pager,next" @current-change="changePage" />
+        <el-pagination
+          :page-size="pageParams.pagesize"
+          :total="pageParams.total"
+          :current-page="pageParams.page"
+          layout="prev,pager,next"
+          @current-change="changePage"
+        />
       </el-row>
     </div>
     <!-- 这里如果不加.sync就无法点击右上角的叉叉来关闭弹窗 因为父组件是这个index.vue子组件是弹窗 不加.sync修饰符 就无法通过子组件来给父组件传递数据来关闭弹窗 -->
-    <el-dialog width="500px" title="新增角色" :visible.sync="showDialog" @close="btnCancel">
+    <el-dialog
+      width="500px"
+      title="新增角色"
+      :visible.sync="showDialog"
+      @close="btnCancel"
+    >
       <!-- 表单内容  -->
-      <el-form ref="roleForm" :model="roleForm" :rules="rules" label-width="120px">
+      <el-form
+        ref="roleForm"
+        :model="roleForm"
+        :rules="rules"
+        label-width="120px"
+      >
         <el-form-item label="角色名称" prop="name">
-          <el-input v-model="roleForm.name" style="width:300px" size="mini" />
+          <el-input v-model="roleForm.name" style="width: 300px" size="mini" />
         </el-form-item>
         <!-- 下面这个不需要校验 所以就不用写prop="state"属性 但是如果要重置表单 就又需要prop了 所以还是得写-->
         <el-form-item label="启用" prop="state">
@@ -72,12 +94,22 @@
           />
         </el-form-item>
         <el-form-item label="角色描述" prop="description">
-          <el-input v-model="roleForm.description" type="textarea" :rows="3" style="width:300px" size="mini" />
+          <el-input
+            v-model="roleForm.description"
+            type="textarea"
+            :rows="3"
+            style="width: 300px"
+            size="mini"
+          />
         </el-form-item>
         <el-form-item>
           <el-row type="flex" justify="center">
             <el-col :span="12">
-              <el-button type="primary" sizi="mini" @click="btnOk">确认</el-button>
+              <el-button
+                type="primary"
+                sizi="mini"
+                @click="btnOk"
+              >确认</el-button>
               <el-button sizi="mini" @click="btnCancel">取消</el-button>
             </el-col>
           </el-row>
@@ -136,28 +168,36 @@ export default {
         // 数据响应式的问题 数据变化 视图更新 但是添加的属性不具备响应式特点
         // this.$set(目标对象,属性名,初始属性值) 可以针对目标对象添加的属性 添加响应式
         this.$set(item, 'isEdit', false)
-      })
+        // 声明缓存数据
+        this.$set(item, 'editRow', {
+          name: item.name,
+          description: item.description,
+          state: item.state
+        }
+        )
+      }
+      )
     },
     changePage(newPage) {
-      // alert(newPage)
-      // 当页码发生变化的时候 重新获取数据
+    // alert(newPage)
+    // 当页码发生变化的时候 重新获取数据
       this.pageParams.page = newPage
       this.getRoleList()
     },
     btnOk() {
       this.$refs.roleForm.validate(async valid => {
         if (valid) {
-          // 校验通过
-          // 发送请求
+        // 校验通过
+        // 发送请求
           await addRole(this.roleForm)
           // 因为前面封装的时候直接获取的data 获取不到code了 所以直接给成功提示吧
           // 如果状态码是40001 意思是后端返回数据 并提示成功
           this.$message.success('添加成功')// 给客户提示
           this.getRoleList()// 重新获取数据
           this.btnCancel()// 关闭弹框并重置表单
-          // } else {
-          //   this.$message.error('添加失败')// 客户端返回数据并提示失败的情况下提示客户添加失败
-          // }
+        // } else {
+        //   this.$message.error('添加失败')// 客户端返回数据并提示失败的情况下提示客户添加失败
+        // }
         } else {
           this.$message.error('校验失败')// 校验不通过的情况下提示校验失败
         }
@@ -168,13 +208,17 @@ export default {
       this.showDialog = false// 关闭弹框
     },
     btnEditRow(row) {
-      // 点击编辑按钮的时候 给当前行添加一个编辑标记
+    // 点击编辑按钮的时候 给当前行添加一个编辑标记
       row.isEdit = true
-      console.log(row)
+      // console.log(row)
+      // 更新缓存数据
+      row.editRow.name = row.name
+      row.editRow.description = row.description
+      row.editRow.state = row.state
     }
 
-  }
-}
+  }}
+
 </script>
 <style scoped>
 .role-operate {
