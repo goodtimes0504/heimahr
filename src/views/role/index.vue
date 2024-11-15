@@ -38,8 +38,8 @@
           <template v-slot="{ row }">
             <template v-if="row.isEdit">
               <!-- 编辑状态 -->
-              <el-button type="primary" size="mini">确定</el-button>
-              <el-button size="mini">取消</el-button>
+              <el-button type="primary" size="mini" @click="btnEditOk(row)">确定</el-button>
+              <el-button size="mini" @click="btnEditCancel(row)">取消</el-button>
             </template>
             <template v-else>
               <!-- 非编辑状态 -->
@@ -123,6 +123,8 @@
 import { getRoleList } from '@/api/role'
 // 导入新增角色的接口
 import { addRole } from '@/api/role'
+// 导入更新角色的接口
+import { updateRole } from '@/api/role'
 export default {
   name: 'Role',
   data() {
@@ -211,12 +213,37 @@ export default {
     // 点击编辑按钮的时候 给当前行添加一个编辑标记
       row.isEdit = true
       // console.log(row)
-      // 更新缓存数据
+      // 更新缓存数据 解决退出编辑模式再次进入编辑时还是上一次编辑时的数据的bug
       row.editRow.name = row.name
       row.editRow.description = row.description
       row.editRow.state = row.state
+    },
+    // 编辑模式时点击确定
+    async btnEditOk(row) {
+      if (row.editRow.name && row.editRow.description) {
+        // 校验通过
+        await updateRole({ ...row.editRow, id: row.id })
+        // 更新成功 提示用户
+        this.$message.success('更新角色成功')
+        // 更新显示数据 该行退出编辑状态
+        // eslint-disable-next-line require-atomic-updates
+        // row.name = row.editRow.name // eslint的校验 误判 它认为等待更新的变量在更新之前被使用了 所以报错
+        // Object.assign() 方法用于将所有可枚举属性的值从一个或多个源对象复制到目标对象。它将返回目标对象。
+        Object.assign(row, {
+          ...row.editRow,
+          isEdit: false// 退出编辑模式
+          // 上面这么写是规避eslint的误判
+        })
+      } else {
+        // 校验不通过
+        this.$message.error('角色和描述不能为空')
+        return
+      }
+    },
+    // 编辑时点击取消
+    btnEditCancel(row) {
+      row.isEdit = false
     }
-
   }}
 
 </script>
