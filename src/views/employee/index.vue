@@ -4,6 +4,7 @@
       <div class="left">
         <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
+        <el-tree :data="depts" :props="defaultProps" :default-expand-all="true"	:expand-on-click-node="false" :highlight-current="true" />
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
@@ -19,8 +20,32 @@
 </template>
 
 <script>
+// 导入获取组织架构api
+import { getDepartment } from '@/api/department'
+// 引入转化树形数据的方法
+import { transListToTreeData } from '@/utils/index'
 export default {
-  name: 'Employee'
+  name: 'Employee',
+  data() {
+    return {
+      depts: [], // 组织架构数据
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      }
+    }
+  },
+  created() {
+    this.getDepartment()
+  },
+  methods: {
+    // 定义获取组织架构的方法
+    async getDepartment() {
+      // 递归方法可以将列表转化成树形结构
+      this.depts = transListToTreeData(await getDepartment(), 0)
+      // console.log(res)
+    }
+  }
 }
 </script>
 
