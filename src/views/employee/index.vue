@@ -17,7 +17,7 @@
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
           <el-button size="mini" type="primary">添加员工</el-button>
-          <el-button size="mini">excel导入</el-button>
+          <el-button size="mini" @click="showExcelDialog=true">excel导入</el-button>
           <el-button size="mini" @click="exportEmployee">excel导出</el-button>
         </el-row>
         <!-- 表格组件 -->
@@ -56,14 +56,15 @@
           </el-table-column>
 
         </el-table>
-
+        <!-- 分页 -->
+        <!-- align意思是垂直居中 flex是水平排列 justify 是水平右侧对齐 -->
+        <el-row style="height:60px" align="middle" type="flex" justify="end">
+          <el-pagination layout="total,prev, pager, next" :total="total" :current-page="queryParams.page" :pase-size="queryParams.size" @current-change="changePage" />
+        </el-row>
       </div>
     </div>
-    <!-- 分页 -->
-    <!-- align意思是垂直居中 flex是水平排列 justify 是水平右侧对齐 -->
-    <el-row style="height:60px" align="middle" type="flex" justify="end">
-      <el-pagination layout="total,prev, pager, next" :total="total" :current-page="queryParams.page" :pase-size="queryParams.size" @current-change="changePage" />
-    </el-row>
+    <!-- 放置导入excel功能的弹窗组件 -->
+    <ImportExcel :show-excel-dialog.sync="showExcelDialog" />
   </div>
 
 </template>
@@ -81,8 +82,13 @@ import { getEmployeeList } from '@/api/employee'
 import { exportEmployee } from '@/api/employee'
 // 引入npm包file-saver
 import FileSaver from 'file-saver'
+// 引入导入excel的弹窗组件
+import ImportExcel from './components/import-excel.vue'
 export default {
   name: 'Employee',
+  components: {
+    ImportExcel
+  },
   data() {
     return {
       depts: [], // 组织架构数据
@@ -100,7 +106,9 @@ export default {
       // 存储员工列表数据
       list: [],
       // 记录员工总数
-      total: 0
+      total: 0,
+      // 控制导入excel弹窗显示与隐藏
+      showExcelDialog: false
     }
   },
   created() {
