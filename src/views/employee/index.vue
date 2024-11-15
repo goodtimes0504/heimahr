@@ -2,7 +2,15 @@
   <div class="container">
     <div class="app-container">
       <div class="left">
-        <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
+        <el-input
+          v-model="queryParams.keyword"
+          style="margin-bottom:10px"
+          type="text"
+          prefix-icon="el-icon-search"
+          size="small"
+          placeholder="输入员工姓名全员搜索"
+          @input="changeValue"
+        />
         <!-- 树形组件 -->
         <el-tree ref="deptTree" :data="depts" :props="defaultProps" :default-expand-all="true"	:expand-on-click-node="false" :highlight-current="true" node-key="id" @current-change="selectNode" />
       </div>
@@ -82,7 +90,8 @@ export default {
       queryParams: {
         departmentId: null, // 部门id
         page: 1, // 当前页码
-        pageSize: 10// 每页条数
+        pageSize: 10, // 每页条数
+        keyword: '' // 关键字
       },
       // 存储员工列表数据
       list: [],
@@ -127,6 +136,17 @@ export default {
       // alert(newPage)
       this.queryParams.page = newPage // 赋值新页码给查询参数对象
       this.getEmployeeList() // 重新按照最新的页码获取员工列表
+    },
+    // 左上角模糊搜索框值改变时触发
+    changeValue() {
+      // 防抖 单位时间之内只执行最后一次
+      // this.timer表示给当前组件实例动态添加一个属性timer
+      clearTimeout(this.timer)
+      this.timer = setTimeout(() => {
+        this.queryParams.page = 1 // 重置页码为1
+        this.getEmployeeList() // 重新获取员工列表
+      }, 300)
+      // console.log(this.queryParams.keyword)
     }
 
   }
