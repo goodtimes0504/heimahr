@@ -15,3 +15,11 @@ export function exportEmployee() {
     responseType: 'blob' // blob是二进制数据 使用blob接收二进制文件流
   })
 }
+// 下载导入模板的接口
+export function getExportTemplate() {
+  return request({
+    url: '/sys/user/import/template',
+    responseType: 'blob'// 改变接收数据的类型 接收二进制文件流
+
+  })
+}
