@@ -54,7 +54,7 @@
     <!-- 分页 -->
     <!-- align意思是垂直居中 flex是水平排列 justify 是水平右侧对齐 -->
     <el-row style="height:60px" align="middle" type="flex" justify="end">
-      <el-pagination layout="total,prev, pager, next" :total="1000" />
+      <el-pagination layout="total,prev, pager, next" :total="total" :current-page="queryParams.page" :pase-size="queryParams.size" @current-change="changePage" />
     </el-row>
   </div>
 
@@ -80,10 +80,14 @@ export default {
       },
       // 存储查询对象 根据接口文档放属性
       queryParams: {
-        departmentId: null
+        departmentId: null, // 部门id
+        page: 1, // 当前页码
+        pageSize: 10// 每页条数
       },
       // 存储员工列表数据
-      list: []
+      list: [],
+      // 记录员工总数
+      total: 0
     }
   },
   created() {
@@ -106,15 +110,25 @@ export default {
       this.getEmployeeList()
     },
     selectNode(node) {
+      // 切换部门的时候应该重新把page重置为1  否则会出现数据错乱
+      this.queryParams.page = 1
       // console.log(node)
       this.queryParams.departmentId = node.id // 重新记录了查询id
       this.getEmployeeList()// 重新获取员工列表
     },
     // 获取员工列表方法
     async getEmployeeList() {
-      const { rows } = await getEmployeeList(this.queryParams)
+      const { rows, total } = await getEmployeeList(this.queryParams)
       this.list = rows
+      this.total = total
+    },
+    // 分页组件的页码改变时触发
+    changePage(newPage) {
+      // alert(newPage)
+      this.queryParams.page = newPage // 赋值新页码给查询参数对象
+      this.getEmployeeList() // 重新按照最新的页码获取员工列表
     }
+
   }
 }
 </script>
