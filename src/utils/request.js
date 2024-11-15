@@ -97,7 +97,7 @@ const service = axios.create({
   // 比如在开发环境中，你可以将VUE_APP_BASE_API设置为/api
   // 而在生产环境中，你可以将VUE_APP_BASE_API设置为/prod-api
   // 这样就可以在开发环境和生产环境中自动切换baseURL了，而不用手动修改baseURL
-  timeout: 10000 // 请求超时时间，单位是毫秒
+  timeout: 20000 // 请求超时时间，单位是毫秒
 })
 // 请求拦截器
 // 成功执行第一个回调函数，失败执行第二个回调函数
@@ -120,6 +120,8 @@ service.interceptors.request.use((config) => {
 service.interceptors.response.use((response) => {
   // axios的响应数据在response.data里 因为axios默认包裹了一层data
   // 对响应数据做点什么
+  // 判断是不是blob 方便下载文件
+  if (response.data instanceof Blob) return response.data// 直接返回blob数据 让下载文件的地方可以拿到blob数据
   const { data, message, success } = response.data
   if (success) {
     return data
