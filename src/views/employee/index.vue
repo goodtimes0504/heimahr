@@ -4,7 +4,7 @@
       <div class="left">
         <el-input style="margin-bottom:10px" type="text" prefix-icon="el-icon-search" size="small" placeholder="输入员工姓名全员搜索" />
         <!-- 树形组件 -->
-        <el-tree :data="depts" :props="defaultProps" :default-expand-all="true"	:expand-on-click-node="false" :highlight-current="true" />
+        <el-tree ref="deptTree" :data="depts" :props="defaultProps" :default-expand-all="true"	:expand-on-click-node="false" :highlight-current="true" node-key="id" @current-change="selectNode" />
       </div>
       <div class="right">
         <el-row class="opeate-tools" type="flex" justify="end">
@@ -22,6 +22,7 @@
 <script>
 // 导入获取组织架构api
 import { getDepartment } from '@/api/department'
+
 // 引入转化树形数据的方法
 import { transListToTreeData } from '@/utils/index'
 export default {
@@ -32,6 +33,10 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'name'
+      },
+      // 存储查询对象 根据接口文档放属性
+      queryParams: {
+        departmentId: null
       }
     }
   },
@@ -43,7 +48,18 @@ export default {
     async getDepartment() {
       // 递归方法可以将列表转化成树形结构
       this.depts = transListToTreeData(await getDepartment(), 0)
-      // console.log(res)
+      // console.log(this.depts[0])
+      this.queryParams.departmentId = this.depts[0].id
+      // 选中某个树形节点
+      // 数组件渲染是异步的 得等它渲染完之后才能选中
+      this.$nextTick(() => {
+        // 此时意味着树的渲染完毕了
+        this.$refs.deptTree.setCurrentKey(this.queryParams.departmentId)
+      })
+    },
+    selectNode(node) {
+      // console.log(node)
+      this.queryParams.departmentId = node.id
     }
   }
 }
