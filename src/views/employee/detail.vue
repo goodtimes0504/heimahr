@@ -23,7 +23,8 @@
           <el-row>
             <el-col :span="12">
               <el-form-item label="手机" prop="mobile">
-                <el-input v-model="userInfo.mobile" size="mini" class="inputW" />
+                <!--:disabled="!!$route.params.id"意思是路由参数有id的时候不能修改手机号 $route.params.id是字符串前面加俩叹号意思是把字符串变成布尔值 原理是先取反再取反 -->
+                <el-input v-model="userInfo.mobile" size="mini" class="inputW" :disabled="!!$route.params.id" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -93,6 +94,8 @@ import SelectTree from './components/select-tree.vue'
 import { addEmployee } from '@/api/employee'
 // 引入获取员工详情接口
 import { getEmployeeDetail } from '@/api/employee'
+// 引入编辑员工接口
+import { updateEmployee } from '@/api/employee'
 export default {
   components: {
     SelectTree
@@ -166,9 +169,17 @@ export default {
       this.$refs.userForm.validate(async(isOk) => {
         if (isOk) {
           // 校验通过 调用接口
+          // 根据路由参数的id判断是新增还是编辑 有id就是编辑 没有id就是新增
+          if (this.$route.params.id) {
+            // 编辑
+            await updateEmployee(this.userInfo)
+            this.$message.success('更新员工成功')
+          } else {
+            // 新增
+            await addEmployee(this.userInfo)
+            this.$message.success('新增员工成功')
+          }
 
-          await addEmployee(this.userInfo)
-          this.$message.success('新增员工成功')
           this.$router.push('/employee')
         }
       })
