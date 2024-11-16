@@ -3,7 +3,7 @@
     class="avatar-uploader"
     action=""
     :show-file-list="false"
-
+    :http-request="uploadImage"
     :before-upload="beforeAvatarUpload"
   >
     <!-- action是上传的地址 人资项目不需要 自动上传才需要action 手动上传不需要action 但是哪怕action不用也要给一个空字符串 不给会报错 :show-file-list="false"不展示列表 :on-success="handleAvatarSuccess"上传成功时的方法 :before-upload="beforeAvatarUpload"上传前的检查方法-->
@@ -13,6 +13,8 @@
 </template>
 
 <script>
+// 引入腾讯云cos存储桶上传sdk
+import COS from 'cos-js-sdk-v5'
 export default {
   props: {
     value: {
@@ -39,6 +41,30 @@ export default {
         this.$message.error('上传头像图片大小不能超过 5MB!')
       }
       return isJPG && isLt5M
+    },
+    // 选择图片上传
+    uploadImage(params) {
+    //   console.log(params.file)
+      const cos = new COS({
+        SecretID: '',
+        SecretKey: ''
+      })// 完成cos对象的初始化
+      cos.putObject({
+        Bucket: 'test-1258365177', // 存储桶名称
+        Region: 'ap-guangzhou', // 存储桶所在地域
+        Key: params.file.name, // 文件名
+        Body: params.file, // 上传文件对象
+        StorageClass: 'STANDARD' // 上传文件时，指定文件上传的格式  form-data
+      }, (err, data) => {
+        // console.log(err || data)
+        if (err) {
+          this.$message.error(err.Message)
+        } else {
+          // 上传成功之后 把图片地址赋值给父组件的value属性
+          this.$emit('input', 'http://' + data.Location)
+          this.$message.success('上传成功')
+        }
+      })
     }
   }
 }
