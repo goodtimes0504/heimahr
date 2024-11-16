@@ -132,7 +132,7 @@ export function transListToTreeData(list, rootValue) {
       // 递归找当前节点的子节点 原理是 遍历数组 如果里面有某个节点的pid等于根节点的id 就把那个节点放入数组中
       // 然后把那个节点作为根节点 继续递归 直到找不到子节点 就返回数组 然后把数组放入当前节点的children中
       const children = transListToTreeData(list, item.id)
-      item.children = children
+      if (children.length > 0) { item.children = children }// 只有在有子节点的情况下 才会有children属性
     }
   })
   return array
