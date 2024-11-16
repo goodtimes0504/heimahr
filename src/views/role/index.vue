@@ -43,7 +43,7 @@
             </template>
             <template v-else>
               <!-- 非编辑状态 -->
-              <el-button size="mini" type="text">分配权限</el-button>
+              <el-button size="mini" type="text" @click="btnPermission">分配权限</el-button>
               <el-button
                 size="mini"
                 type="text"
@@ -121,6 +121,11 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+    <!-- 放置权限弹层 -->
+    <el-dialog :visible.sync="showPermissionDialog" title="分配权限">
+      <!-- 放置权限数据 -->
+      <el-tree ref="treeRef" :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" />
+    </el-dialog>
   </div>
 </template>
 <script>
@@ -132,6 +137,11 @@ import { addRole } from '@/api/role'
 import { updateRole } from '@/api/role'
 // 导入删除角色的接口
 import { delRole } from '@/api/role'
+// 引入获取权限列表接口
+import { getPermissionList } from '@/api/permission'
+// 引入转化树形接口方法
+import { transListToTreeData } from '@/utils'
+
 export default {
   name: 'Role',
   data() {
@@ -160,7 +170,9 @@ export default {
           { required: true, message: '请输入角色描述', trigger: 'blur' },
           { min: 1, max: 100, message: '长度在 1 到 100 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      showPermissionDialog: false, // 控制权限弹窗的显示和隐藏
+      permissionData: []// 树形权限列表数据
     }
   },
   created() {
@@ -261,6 +273,11 @@ export default {
         this.pageParams.page--
       }
       this.getRoleList()
+    },
+    // btnPermission 按钮点击事件
+    async btnPermission() {
+      this.showPermissionDialog = true
+      this.permissionData = transListToTreeData(await getPermissionList(), 0)
     }
   }}
 
