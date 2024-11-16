@@ -91,6 +91,8 @@
 import SelectTree from './components/select-tree.vue'
 // 引入新增员工接口
 import { addEmployee } from '@/api/employee'
+// 引入获取员工详情接口
+import { getEmployeeDetail } from '@/api/employee'
 export default {
   components: {
     SelectTree
@@ -150,7 +152,16 @@ export default {
       }
     }
   },
+  created() {
+    // 获取路由参数的id方法是this.$route.params.id
+    if (this.$route.params.id) {
+      this.getEmployeeDetail()
+    }
+  },
   methods: {
+    async getEmployeeDetail() {
+      this.userInfo = await getEmployeeDetail(this.$route.params.id)
+    },
     saveData() {
       this.$refs.userForm.validate(async(isOk) => {
         if (isOk) {

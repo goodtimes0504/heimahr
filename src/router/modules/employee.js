@@ -11,7 +11,8 @@ export default {
       icon: 'people'
     }
   }, {
-    path: '/employee/detail', // 员工详情的地址
+    path: '/employee/detail/:id?', // 员工详情的地址 :id 是动态参数 如果不加:id 就是静态路由 如果后面push跳转的时候传参了 就会自动匹配到这个路由 如果不加:id 就不会匹配到这个路由 就会报错404
+    // 然后最后加一个？ 表示这个参数是可选的 可以传也可以不传 不然不带id的跳转也会报错比如新增员工的时候
     component: () => import('@/views/employee/detail'),
     hidden: true, // 不显示在左侧菜单
     meta: {
