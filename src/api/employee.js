@@ -62,3 +62,10 @@ export function updateEmployee(data) {
     data
   })
 }
+// 获取已启用的角色
+export function getEnabledRoleList() {
+  return request({
+    url: '/sys/role/list/enabled',
+    method: 'get'
+  })
+}
