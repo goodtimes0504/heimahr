@@ -43,7 +43,7 @@
             </template>
             <template v-else>
               <!-- 非编辑状态 -->
-              <el-button size="mini" type="text" @click="btnPermission">分配权限</el-button>
+              <el-button size="mini" type="text" @click="btnPermission(row.id)">分配权限</el-button>
               <el-button
                 size="mini"
                 type="text"
@@ -123,8 +123,9 @@
     </el-dialog>
     <!-- 放置权限弹层 -->
     <el-dialog :visible.sync="showPermissionDialog" title="分配权限">
-      <!-- 放置权限数据 -->
-      <el-tree ref="treeRef" :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" />
+      <!-- 放置权限数据 第一个属性是绑定数据 第二个是展示名称对应的属性 第三个是是否有选择框 第四个是默认是否全部展开
+       node-key是	每个树节点用来作为唯一标识的属性，整棵树应该是唯一的-->
+      <el-tree :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" :default-checked-keys="permIds" node-key="id" />
     </el-dialog>
   </div>
 </template>
@@ -141,6 +142,8 @@ import { delRole } from '@/api/role'
 import { getPermissionList } from '@/api/permission'
 // 引入转化树形接口方法
 import { transListToTreeData } from '@/utils'
+// 引入根据id查询角色详情接口
+import { getRoleDetail } from '@/api/role'
 
 export default {
   name: 'Role',
@@ -172,7 +175,12 @@ export default {
         ]
       },
       showPermissionDialog: false, // 控制权限弹窗的显示和隐藏
-      permissionData: []// 树形权限列表数据
+      permissionData: [], // 树形权限列表数据
+      // 当前角色id
+      currentRoleId: null,
+      // 当前角色拥有的权限id列表
+      permIds: []
+
     }
   },
   created() {
@@ -275,9 +283,13 @@ export default {
       this.getRoleList()
     },
     // btnPermission 按钮点击事件
-    async btnPermission() {
-      this.showPermissionDialog = true
+    async btnPermission(id) {
+      this.currentRoleId = id
+      const { permIds } = await getRoleDetail(id)
+      // console.log(permIds)
+      this.permIds = permIds
       this.permissionData = transListToTreeData(await getPermissionList(), 0)
+      this.showPermissionDialog = true
     }
   }}
 
