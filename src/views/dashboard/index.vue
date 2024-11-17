@@ -220,7 +220,13 @@ import { mapGetters } from 'vuex'
 // 引入获取home信息的接口
 import { getHomeData } from '@/api/home'
 // 引入echarts
-import * as echarts from 'echarts' // 引入所有echarts
+// import * as echarts from 'echarts' // 引入所有echarts
+// 下面是按需引入echarts
+import * as echarts from 'echarts/core' // 引入核心包
+import { LineChart } from 'echarts/charts'// 引入折线图
+import { GridComponent } from 'echarts/components' // 引入网格组件
+import { CanvasRenderer } from 'echarts/renderers' // 引入canvas渲染器
+echarts.use([LineChart, GridComponent, CanvasRenderer]) // 注册必须的组件
 export default {
   components: {
     CountTo
