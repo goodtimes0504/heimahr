@@ -102,6 +102,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="social" style="height: 100%;width: 100%" />
             </div>
           </div>
         </div>
@@ -131,6 +132,7 @@
             </div>
             <div class="chart">
               <!-- 图表 -->
+              <div ref="provident" style="height: 100%;width: 100%" />
             </div>
           </div>
         </div>
@@ -215,13 +217,85 @@
 import CountTo from 'vue-count-to'
 // 引入mapGetters辅助函数从vuex获取展示数据
 import { mapGetters } from 'vuex'
+// 引入获取home信息的接口
+import { getHomeData } from '@/api/home'
+// 引入echarts
+import * as echarts from 'echarts' // 引入所有echarts
 export default {
   components: {
     CountTo
   },
+  data() {
+    return {
+      homeData: {}// 存放响应式数据
+    }
+  },
   // 计算属性
   computed: {
     ...mapGetters(['name', 'avatar', 'company', 'departmentName'])// 映射给了计算属性
+  },
+  watch: {
+    homeData() {
+      console.log(this.homeData)
+      this.social.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.homeData.socialInsurance?.xAxis
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: this.homeData.socialInsurance?.yAxis,
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be'// 填充颜色
+            },
+            lineStyle: {
+              color: '#04c9be'// 填充颜色
+            }
+          }
+        ]
+      }), this.provident.setOption({
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.homeData.providentFund?.xAxis
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: this.homeData.providentFund?.yAxis,
+            type: 'line',
+            areaStyle: {
+              color: '#04c9be'// 填充颜色
+            },
+            lineStyle: {
+              color: '#04c9be'// 填充颜色
+            }
+          }
+        ]
+      })
+    }
+  },
+  created() {
+    this.getHomeData()
+  },
+  mounted() {
+    // console.log(this.$refs.social)
+    // 监听homeData数据变化，当数据变化时，重新渲染图表
+    this.social = echarts.init(this.$refs.social)// 初始化echarts 得到一个实例对象
+    this.provident = echarts.init(this.$refs.provident)
+  },
+  methods: {
+    async getHomeData() {
+      this.homeData = await getHomeData()
+    }
+
   }
 }
 </script>
