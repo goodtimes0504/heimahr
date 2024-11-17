@@ -100,11 +100,15 @@
 import { setToken, getToken, removeToken } from '@/utils/auth.js'
 // 引入接口
 import { login, getUserInfo } from '@/api/user.js'
+// 引入静态路由
+import { constantRoutes } from '@/router'
 const state = {
   // state用来存放数据
   token: getToken() || '', // 应该从本地读取初始值，如果没有则为空字符串
   // 定义一个变量，用来存储用户基本资料
-  userInfo: {}
+  userInfo: {},
+  // 定义一个数组用来存储所有路由 默认初始值是静态路由  动态路由是根据用户权限动态生成的
+  routes: constantRoutes
 }
 const mutations = {
   // mutations用来修改数据
@@ -124,6 +128,10 @@ const mutations = {
   // payload是一个对象，它包含了传递给mutation的参数对象
   setUserInfo(state, userInfo) {
     state.userInfo = userInfo
+  },
+  // 设置动态路由
+  setRoutes(state, newRoutes) {
+    state.routes = [...constantRoutes, ...newRoutes]
   }
 }
 const actions = {

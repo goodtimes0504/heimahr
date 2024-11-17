@@ -106,6 +106,8 @@ router.beforeEach(async(to, from, next) => {
         const filterRoutes = asyncRoutes.filter(item => {
           return roles.menus.includes(item.name)
         })
+        // 将动态路由添加到vuex里
+        store.commit('user/setRoutes', filterRoutes)
         // filterRoutes就是筛选过后的路由
         // console.log(filterRoutes)
         router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }])// 动态添加路由

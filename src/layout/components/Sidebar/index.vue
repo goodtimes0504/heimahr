@@ -29,13 +29,14 @@ export default {
   components: { SidebarItem, Logo },
   computed: {
     ...mapGetters([
-      'sidebar'
+      'sidebar', 'routes'
     ]),
     // 路由信息的计算属性
-    routes() {
-      // 返回当前路由的所有路由信息
-      return this.$router.options.routes
-    },
+    // routes() {
+    //   // 返回当前路由的所有路由信息
+    //   return this.$router.options.routes
+    // },
+    // 上面动态路由之后 就失效了 得用上面的mapGetters从vuex里获取了
     activeMenu() {
       const route = this.$route
       const { meta, path } = route
