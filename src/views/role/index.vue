@@ -125,7 +125,8 @@
     <el-dialog :visible.sync="showPermissionDialog" title="分配权限">
       <!-- 放置权限数据 第一个属性是绑定数据 第二个是展示名称对应的属性 第三个是是否有选择框 第四个是默认是否全部展开
        node-key是	每个树节点用来作为唯一标识的属性，整棵树应该是唯一的-->
-      <el-tree ref="permTree" :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" :default-checked-keys="permIds" node-key="id" check-strictly="true" />
+      <!--:check-strictly="true"前面有冒号的 后面的true是布尔值 check-strictly="true"  这种前面没冒号的后面的true是字符串 -->
+      <el-tree ref="permTree" :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" :default-checked-keys="permIds" node-key="id" :check-strictly="true" />
       <el-row slot="footer" type="flex" justify="center">
         <el-col :span="6">
           <el-button type="primary" size="mini" @click="btnPermissionOk">确定</el-button>
