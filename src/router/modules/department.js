@@ -3,6 +3,7 @@ import layout from '@/layout'
 export default {
   // 路由信息
   path: '/department', // 路由地址
+  name: 'department', // 路由名称
   component: layout, // 一级路由
   children: [
     {

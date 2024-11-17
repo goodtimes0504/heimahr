@@ -72,6 +72,8 @@ import nprogress from 'nprogress'
 import 'nprogress/nprogress.css'
 // 引入vuex
 import store from '@/store'
+// 引入动态路由
+import { asyncRoutes } from '@/router'
 /**
  * 前置守卫
  * 前置守卫的作用是：在每次路由切换之前都会执行，一般用于登录验证、页面拦截等
@@ -97,9 +99,20 @@ router.beforeEach(async(to, from, next) => {
       if (!store.getters.userId) {
         // 没有获取过资料
         // 获取用户资料并保存 因为getUserInfo里已经有保存动作了 所以这里不需要再保存了
-        await store.dispatch('user/getUserInfo')
+        const { roles } = await store.dispatch('user/getUserInfo')
+        // console.log(roles.menus)// 不确定数量
+        // console.log(asyncRoutes)// 8个
+        // 数组filter方法：过滤数组，返回一个新数组 遍历每一项，如果回调函数返回true，则保留该项，否则不保留
+        const filterRoutes = asyncRoutes.filter(item => {
+          return roles.menus.includes(item.name)
+        })
+        // filterRoutes就是筛选过后的路由
+        // console.log(filterRoutes)
+        router.addRoutes([...filterRoutes, { path: '*', redirect: '/404', hidden: true }])// 动态添加路由
+        next(to.path)// 动态添加路由后 必须要调用next(to.path) 否则会白屏
+      } else {
+        next()// 直接放行
       }
-      next()// 直接放行
     }
   } else {
     // 没有token

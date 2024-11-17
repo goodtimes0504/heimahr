@@ -2,6 +2,7 @@ import layout from '@/layout'
 export default {
   path: '/approval',
   component: layout,
+  name: 'approval',
   children: [{
     path: '',
     name: 'approval',

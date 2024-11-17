@@ -147,6 +147,7 @@ const actions = {
     // console.log('调用action中的getUserInfo方法')
     const result = await getUserInfo()
     context.commit('setUserInfo', result)
+    return result// 返回数据
     // console.log('获取用户基本资料成功')
   },
   // 退出登录的action

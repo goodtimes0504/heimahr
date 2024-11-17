@@ -64,10 +64,11 @@ export const constantRoutes = [
         meta: { title: '首页', icon: 'dashboard' }
       }
     ]
-  },
+  }
 
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // { path: '*', redirect: '/404', hidden: true }
+  // 如果有动态路由的话 需要把404放在最后面 在添加动态路由的地方重新添加404 否则会匹配不到
 ]
 // 动态路由
 export const asyncRoutes = [
