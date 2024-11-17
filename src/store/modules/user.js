@@ -102,6 +102,8 @@ import { setToken, getToken, removeToken } from '@/utils/auth.js'
 import { login, getUserInfo } from '@/api/user.js'
 // 引入静态路由
 import { constantRoutes } from '@/router'
+// 引入重置路由方法
+import { resetRouter } from '@/router'
 const state = {
   // state用来存放数据
   token: getToken() || '', // 应该从本地读取初始值，如果没有则为空字符串
@@ -162,6 +164,8 @@ const actions = {
   logout(context) {
     context.commit('removeToken')// 移除token
     context.commit('setUserInfo', {})// 清空用户信息
+    // 调用重置路由方法
+    resetRouter()
   }
 }
 export default {
