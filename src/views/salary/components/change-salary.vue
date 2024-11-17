@@ -62,7 +62,16 @@ import { changeSalary } from '@/api/salary'
 
 export default {
   name: 'UsersTableIndex',
-  props: ['userSalary', 'userId'],
+  props: {
+    userSalary: {
+      type: Object,
+      required: true
+    },
+    userId: {
+      type: Number,
+      required: true
+    }
+  },
 
   data() {
     return {

@@ -5,7 +5,7 @@ export default {
   component: layout,
   children: [{
     path: '',
-    name: 'role',
+    name: 'defaultRole',
     component: () => import('@/views/role'),
     meta: {
       title: '角色',

@@ -5,7 +5,7 @@ export default {
   component: layout,
   children: [{
     path: '',
-    name: 'approval',
+    name: 'defaultApproval',
     component: () => import('@/views/approval'),
     meta: {
       title: '审批',
