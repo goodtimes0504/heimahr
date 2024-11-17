@@ -125,7 +125,14 @@
     <el-dialog :visible.sync="showPermissionDialog" title="分配权限">
       <!-- 放置权限数据 第一个属性是绑定数据 第二个是展示名称对应的属性 第三个是是否有选择框 第四个是默认是否全部展开
        node-key是	每个树节点用来作为唯一标识的属性，整棵树应该是唯一的-->
-      <el-tree :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" :default-checked-keys="permIds" node-key="id" />
+      <el-tree ref="permTree" :data="permissionData" :props="{label:'name'}" :show-checkbox="true" :default-expand-all="true" :default-checked-keys="permIds" node-key="id" check-strictly="true" />
+      <el-row slot="footer" type="flex" justify="center">
+        <el-col :span="6">
+          <el-button type="primary" size="mini" @click="btnPermissionOk">确定</el-button>
+          <el-button size="mini" @click="showPermissionDialog=false">取消</el-button>
+
+        </el-col>
+      </el-row>
     </el-dialog>
   </div>
 </template>
@@ -144,6 +151,8 @@ import { getPermissionList } from '@/api/permission'
 import { transListToTreeData } from '@/utils'
 // 引入根据id查询角色详情接口
 import { getRoleDetail } from '@/api/role'
+// 引入根据id分配权限接口
+import { assignPerm } from '@/api/role'
 
 export default {
   name: 'Role',
@@ -290,6 +299,15 @@ export default {
       this.permIds = permIds
       this.permissionData = transListToTreeData(await getPermissionList(), 0)
       this.showPermissionDialog = true
+    },
+    // 权限对话框确定
+    async btnPermissionOk() {
+      await assignPerm({
+        id: this.currentRoleId,
+        permIds: this.$refs.permTree.getCheckedKeys()
+      })
+      this.$message.success('角色分配权限成功')
+      this.showPermissionDialog = false
     }
   }}
 
